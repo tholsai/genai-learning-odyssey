@@ -1,0 +1,8 @@
+{
+  "cursor.experimental.lsp.llmProvider": {
+    "type": "openai",
+    "apiKey": "ollama",
+    "apiBase": "http://localhost:11434/v1",
+    "model": "mistral"
+  }
+}

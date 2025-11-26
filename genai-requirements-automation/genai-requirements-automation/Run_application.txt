@@ -1,0 +1,68 @@
+Quick start: run the application
+
+Step 1: Install dependencies
+# From project root
+uv sync
+
+Step 2: Set up Ollama
+Make sure Ollama is installed and running:
+- Install from https://ollama.ai
+- Pull Mistral model: ollama pull mistral
+- Start Ollama: ollama serve (if not running as service)
+
+Optional: Create backend/.env file for custom settings:
+OLLAMA_API_BASE=http://localhost:11434/v1
+OLLAMA_MODEL=mistral
+
+Step 3: Run the server
+
+cd backend
+uv run uvicorn app:app --reload
+
+Step 4: Access the API
+
+Open your browser to:
+Interactive API docs: http://localhost:8000/docs
+Health check: http://localhost:8000/health
+
+5. Testing the endpoints
+
+Method 1: Swagger UI (easiest)
+	- Go to http://localhost:8000/docs
+	- Click on any endpoint
+	- Click "Try it out"
+	- Fill in the parameters
+	- Click "Execute"
+	- View the response
+Method 2: Test script
+	I've created a test script for you:
+	cd backend
+	uv run python test_api.py
+
+Method 3: Manual testing
+
+1. Test Chat (no upload needed):
+	$body = @{    message = "What are the main features in a user management system?"    use_rag = $false} | ConvertTo-JsonInvoke-RestMethod -Uri "http://localhost:8000/api/v1/chat" -Method Post -Body $body -ContentType "application/json"
+2. Generate Artifacts:
+	$body = @{    spec_text = "The system allows users to login, manage profiles, and has role-based access control."    artifact_types = @("epic", "stories")    output_format = "docx"} | ConvertTo-JsonInvoke-RestMethod -Uri "http://localhost:8000/api/v1/generate" -Method Post -Body $body -ContentType "application/json"
+3. View Generated Files:
+Generated files are saved in: backend/data/generated/
+Download them via:
+Invoke-WebRequest -Uri "http://localhost:8000/api/v1/download/docx?artifact_type=epic" -OutFile "epic.docx"
+What you'll see
+Server logs in the terminal showing requests
+API responses in Swagger UI or your test script
+Generated files in backend/data/generated/ (DOCX/PDF)
+Vector embeddings stored in backend/data/embeddings/chroma/ (for RAG)
+Complete example workflow
+Start server: uv run uvicorn app:app --reload
+Open http://localhost:8000/docs
+Test /api/v1/chat with a question
+Test /api/v1/generate with specification text
+Check backend/data/generated/ for output files
+Download files using /api/v1/download/{doc_type}
+Documentation
+QUICKSTART.md — step-by-step guide
+backend/test_api.py — automated test script
+Interactive docs at http://localhost:8000/docs
+The application is ready to run. Start the server and use the Swagger UI at /docs to test endpoints interactively.

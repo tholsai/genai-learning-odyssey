@@ -16,7 +16,7 @@ class GenerateRequest(BaseModel):
     """Request model for generate endpoint."""
     spec_text: Optional[str] = None
     spec_file_path: Optional[str] = None
-    artifact_types: List[str] = ["epic", "stories", "use_cases", "tdd", "data_model"]
+    artifact_types: List[str] = ["epic", "stories", "use_cases", "tdd", "data_model", "test_plan", "unit_tests", "system_tests"]
     output_format: str = "docx"  # docx or pdf
 
 
@@ -28,8 +28,12 @@ class GenerateResponse(BaseModel):
 
 
 # Initialize components
-rag_retriever = RAGRetriever()
-llm_engine = LLMEngine(rag_retriever=rag_retriever)
+try:
+    rag_retriever = RAGRetriever()
+    llm_engine = LLMEngine(rag_retriever=rag_retriever)
+except Exception as e:
+    print(f"Warning: RAG initialization failed: {e}")
+    llm_engine = LLMEngine(rag_retriever=None)
 file_generator = FileGenerator()
 
 
@@ -50,7 +54,7 @@ async def generate_artifacts(request: GenerateRequest = Body(...)):
     
     - **spec_text**: Direct specification text (optional if spec_file_path provided)
     - **spec_file_path**: Path to specification file (optional if spec_text provided)
-    - **artifact_types**: List of artifacts to generate (epic, stories, use_cases, tdd, data_model)
+    - **artifact_types**: List of artifacts to generate (epic, stories, use_cases, tdd, data_model, test_plan, unit_tests, system_tests)
     - **output_format**: Output format (docx or pdf)
     """
     # Get specification text
@@ -65,7 +69,7 @@ async def generate_artifacts(request: GenerateRequest = Body(...)):
         )
     
     # Validate artifact types
-    valid_types = ["epic", "stories", "use_cases", "tdd", "data_model"]
+    valid_types = ["epic", "stories", "use_cases", "tdd", "data_model", "test_plan", "unit_tests", "system_tests"]
     artifact_types = [t.lower() for t in request.artifact_types]
     invalid_types = [t for t in artifact_types if t not in valid_types]
     
@@ -111,6 +115,8 @@ async def generate_artifacts(request: GenerateRequest = Body(...)):
         )
     
     except Exception as e:
+        import traceback
+        print(f"Full error traceback: {traceback.format_exc()}")
         raise HTTPException(
             status_code=500,
             detail=f"Error generating artifacts: {str(e)}"

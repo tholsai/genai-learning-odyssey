@@ -1,4 +1,4 @@
-"""LLM engine for generating content using Ollama/Mistral."""
+"""LLM engine for generating content using OpenAI GPT-4o-mini."""
 from typing import List, Dict, Any, Optional
 from openai import OpenAI
 from core.config import settings
@@ -6,19 +6,16 @@ from core.rag_retriever import RAGRetriever
 
 
 class LLMEngine:
-    """Engine for LLM-based content generation using Ollama/Mistral."""
+    """Engine for LLM-based content generation using OpenAI GPT-4o-mini."""
     
     def __init__(self, rag_retriever: Optional[RAGRetriever] = None):
-        """Initialize LLM engine with Ollama client."""
-        # Initialize OpenAI client with Ollama's OpenAI-compatible API
-        # Ollama doesn't require authentication, so we use a dummy API key
-        # Set longer timeout for local model inference
+        """Initialize LLM engine with OpenAI client."""
+        # Initialize OpenAI client with API key
         self.client = OpenAI(
-            api_key="ollama",  # Dummy key, not used by Ollama
-            base_url=settings.ollama_api_base,
-            timeout=600.0  # 10 minutes timeout for Ollama requests
+            api_key=settings.openai_api_key,
+            base_url=settings.openai_api_base
         )
-        self.model = settings.ollama_model
+        self.model = settings.openai_model
         self.temperature = settings.temperature
         self.max_tokens = settings.max_tokens
         self.rag_retriever = rag_retriever
@@ -71,7 +68,7 @@ Please answer the question based on the provided context. If the context doesn't
         spec_text: str,
         artifact_type: str
     ) -> str:
-        """Generate requirements artifacts (epic, stories, use cases, TDD, data model)."""
+        """Generate requirements artifacts (epic, stories, use cases, TDD, data model, test plans, unit tests, system tests)."""
         system_prompts = {
             "epic": """You are a requirements analyst. Generate a well-structured epic document based on the functional specification. 
             Include: title, description, acceptance criteria, and business value.""",
@@ -86,7 +83,19 @@ Please answer the question based on the provided context. If the context doesn't
             Include: test scenarios, test cases with steps, expected results, and test data requirements.""",
             
             "data_model": """You are a data architect. Generate a data model based on the functional specification.
-            Include: entities, attributes, relationships, data types, and constraints. Format as ER diagram description or JSON schema."""
+            Include: entities, attributes, relationships, data types, and constraints. Format as ER diagram description or JSON schema.""",
+            
+            "test_plan": """You are a test manager. Generate a comprehensive test plan based on the functional specification.
+            Include: test objectives, scope, test strategy, test levels (unit, integration, system, UAT), test environment requirements, 
+            test schedule, risk assessment, entry/exit criteria, and deliverables.""",
+            
+            "unit_tests": """You are a software developer. Generate unit test cases based on the functional specification.
+            Include: test class structure, test methods for each function/component, mock objects, test data setup, 
+            assertions, and edge cases. Format as code with appropriate testing framework (JUnit, pytest, etc.).""",
+            
+            "system_tests": """You are a system test engineer. Generate system test cases based on the functional specification.
+            Include: end-to-end test scenarios, integration test cases, performance test cases, security test cases, 
+            user acceptance test scenarios, test data requirements, and expected system behavior."""
         }
         
         system_prompt = system_prompts.get(

@@ -17,9 +17,10 @@ class Settings(BaseSettings):
     downloads_dir: str = "data/downloads"
     embeddings_dir: str = "data/embeddings"
     
-    # LLM Settings (Ollama/Mistral)
-    ollama_api_base: str = "http://localhost:11434/v1"
-    ollama_model: str = "mistral:7b"  # Local Mistral model via Ollama
+    # LLM Settings (OpenAI GPT-5 nano)
+    openai_api_key: Optional[str] = None
+    openai_api_base: str = "https://api.openai.com/v1"
+    openai_model: str = "gpt-4o-mini"
     temperature: float = 0.7
     max_tokens: int = 4000
     
@@ -44,4 +45,3 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-

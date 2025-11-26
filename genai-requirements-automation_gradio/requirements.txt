@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+gradio
+openai
+PyPDF2
+python-multipart
+requests
+pydantic
+jinja2
+python-dotenv
+reportlab
+python-docx

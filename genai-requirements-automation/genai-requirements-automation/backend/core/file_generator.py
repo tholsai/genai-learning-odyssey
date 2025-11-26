@@ -128,7 +128,10 @@ class FileGenerator:
             "stories": "User Stories",
             "use_cases": "Use Cases",
             "tdd": "Test-Driven Development Test Cases",
-            "data_model": "Data Model"
+            "data_model": "Data Model",
+            "test_plan": "Test Plan",
+            "unit_tests": "Unit Test Cases",
+            "system_tests": "System Test Cases"
         }
         
         title = titles.get(artifact_type, "Generated Document")

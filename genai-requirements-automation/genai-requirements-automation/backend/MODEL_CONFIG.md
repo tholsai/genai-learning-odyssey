@@ -1,111 +1,73 @@
-# Ollama/Mistral Model Configuration
+# OpenAI GPT-5 nano Model Configuration
 
 ## Current Model
-The default model is now set to **`mistral`** running locally via Ollama.
+The application now uses **GPT-5 nano** via OpenAI's API.
 
 ## Setup
 
-### 1. Install Ollama
-Download and install Ollama from https://ollama.ai
+### 1. Get OpenAI API Key
+1. Go to https://platform.openai.com/api-keys
+2. Create a new API key
+3. Copy the key (starts with `sk-`)
 
-### 2. Pull the Mistral Model
-```bash
-ollama pull mistral
-```
-
-### 3. Start Ollama (if not running as a service)
-```bash
-ollama serve
-```
-
-Ollama will run on `http://localhost:11434` by default.
-
-## Configuration
-
-### Option 1: Environment Variable (Recommended)
+### 2. Configure Environment
 Add to your `backend/.env` file:
 ```env
-OLLAMA_API_BASE=http://localhost:11434/v1
-OLLAMA_MODEL=mistral
+OPENAI_API_KEY=your_api_key_here
+OPENAI_MODEL=gpt-5-nano
+OPENAI_API_BASE=https://api.openai.com/v1
 ```
 
-### Option 2: Edit Config File
-Edit `backend/core/config.py`:
-```python
-ollama_api_base: str = "http://localhost:11434/v1"
-ollama_model: str = "mistral"  # Change this value
+## Configuration Options
+
+### Environment Variables
+```env
+# Required
+OPENAI_API_KEY=sk-...
+
+# Optional (defaults provided)
+OPENAI_MODEL=gpt-5-nano
+OPENAI_API_BASE=https://api.openai.com/v1
+TEMPERATURE=0.7
+MAX_TOKENS=4000
 ```
 
-## Available Models
+### Alternative Models
+If GPT-5 nano is not available, you can use:
+- `gpt-4-turbo`
+- `gpt-4`
+- `gpt-3.5-turbo`
 
-You can use any model available in Ollama. Some popular alternatives:
+Update the `OPENAI_MODEL` in your `.env` file.
 
-1. **`mistral`** (Default)
-   - Good balance of quality and speed
-   - ~7B parameters
-   - Fast inference
+## After Configuration
 
-2. **`mistral:7b-instruct`**
-   - Instruction-tuned version
-   - Better for structured outputs
-
-3. **`llama2`**
-   - Alternative open-source model
-   - Pull with: `ollama pull llama2`
-
-4. **`codellama`**
-   - Code-focused model
-   - Good for technical documentation
-
-5. **`mixtral`**
-   - Mixture of experts model
-   - Higher quality but slower
-
-To use a different model:
+Restart the server for changes to take effect:
 ```bash
-# Pull the model
-ollama pull <model-name>
-
-# Update your .env file
-OLLAMA_MODEL=<model-name>
+cd backend
+uv run uvicorn app:app --reload
 ```
-
-## After Changing the Model
-
-**Restart the server** for changes to take effect:
-1. Stop the current server (Ctrl+C)
-2. Start it again:
-   ```bash
-   cd backend
-   uv run uvicorn app:app --reload
-   ```
 
 ## Troubleshooting
 
+### Invalid API Key
+- Verify your API key is correct
+- Check you have sufficient credits
+- Ensure the key has proper permissions
+
 ### Model Not Found
-1. Verify the model is downloaded: `ollama list`
-2. If not found, pull it: `ollama pull <model-name>`
-3. Check the model name matches exactly (case-sensitive)
+- Verify the model name is correct
+- Check if you have access to GPT-5 nano
+- Try an alternative model like `gpt-4-turbo`
 
-### Connection Issues
-1. Ensure Ollama is running: `ollama serve`
-2. Test the connection: `curl http://localhost:11434/api/tags`
-3. Check firewall settings if using a different host
+### Rate Limits
+- OpenAI has rate limits based on your plan
+- Consider upgrading your OpenAI plan if needed
+- Implement retry logic for production use
 
-### Performance
-- Models run locally, so performance depends on your hardware
-- GPU acceleration is recommended for faster inference
-- Adjust `max_tokens` in config if responses are too long/short
+## Advantages of GPT-5 nano
 
-## Advantages of Local Models
-
-- **Privacy**: All data stays on your machine
-- **No API costs**: Free to use
-- **Offline**: Works without internet (after initial model download)
-- **Customizable**: Can fine-tune models for your use case
-
-## Cost Considerations
-
-- **Free**: No API costs, runs on your hardware
-- **Hardware**: Requires sufficient RAM/VRAM for the model
-- **Mistral 7B**: Requires ~8GB RAM minimum, ~4GB VRAM recommended
+- **High Quality**: Latest OpenAI model with improved capabilities
+- **Fast**: Optimized for speed and efficiency
+- **Reliable**: Cloud-based with high availability
+- **Scalable**: No local hardware requirements
