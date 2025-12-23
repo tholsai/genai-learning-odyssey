@@ -1,0 +1,9 @@
+analyze_mood_task:
+  description: >
+    Conduct a thorough research about the mood {mood_type} with description {mood_description}
+    provide a detailed analysis of the mood and provide expert advice to improve the mood 
+  expected_output: >
+    A detailed analysis of the mood and expert advice to improve the mood
+    The output should be in markdown format
+  agent: wellness_expert
+  output_file: output/mood_analysis.csv
