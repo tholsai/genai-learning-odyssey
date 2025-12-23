@@ -26,7 +26,9 @@ const moods = [
 const Index = () => {
   const [selectedMood, setSelectedMood] = useState<string>("");
   const [description, setDescription] = useState("");
+  
   const [response, setResponse] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -37,19 +39,28 @@ const Index = () => {
 
     try {
       // Replace this URL with your actual API endpoint
-      const apiResponse = await fetch("https://your-api-endpoint.com/mood", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mood: selectedMood,
-          description: description,
-        }),
-      });
+        
+      const apiResponse = await fetch(
+        `http://127.0.0.1:8082/wellnessadvice?mood_type=${encodeURIComponent(selectedMood)}&mood_description=${encodeURIComponent(description)}`,
+        {
+          method: "GET",
+        }
+      );
 
-      const data = await apiResponse.json();
-      setResponse(data.message || JSON.stringify(data));
+      // const apiResponse = await fetch("http://localhost:8082/wellnessadvice", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     mood_type: selectedMood,
+      //     mood_description: description,
+      //   }),
+      // });
+
+      // const data = await apiResponse.json();
+      const data = await apiResponse.text();
+      setResponse(data);
     } catch (error) {
       setResponse("Error: Unable to reach the API. Please check the endpoint.");
     } finally {
